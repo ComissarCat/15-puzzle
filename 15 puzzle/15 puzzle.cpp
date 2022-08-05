@@ -8,13 +8,16 @@
 using namespace std;
 
 int** create_field(int length);
+void randomize_field(int* temp_array, int length);
 void draw_field(int** array, int length, int& number_of_moves);
-void move(int** array, int length, int& number_of_moves, bool& win);
+void move(int** array, int length, int& number_of_moves, bool& win, int direction, bool& moved);
 void check(int** array, int length, bool& win);
 void swap_up(int** array, int length, bool& moved);
 void swap_down(int** array, int length, bool& moved);
 void swap_left(int** array, int length, bool& moved);
 void swap_right(int** array, int length, bool& moved);
+void solve_3_by_3(int** array, int length);
+void player_input(int** array, int length, int& number_of_moves, bool& win);
 
 int main()
 {
@@ -26,9 +29,9 @@ int main()
     draw_field(array, length, number_of_moves);
     do
     {        
-        move(array, length, number_of_moves, win);
+        player_input(array, length, number_of_moves, win);
     } while (not win);
-    cout << "\n\nеее побiда";
+    cout << "\n\nеее перемога";
 
     return 0;
 }
@@ -45,24 +48,8 @@ int** create_field(int length)
     for (int i = 0; i < length * length; i++)
     {
         temp_array[i] = i;
-    }    
-    for (int i = 0; i < rand() % 91 + 10; i++)
-    {
-        swap(temp_array[rand() % (length * length)], temp_array[rand() % (length * length)]);
-    }    
-    for (int i = 0; i < length * length - 1; i++)
-    {
-        if (not temp_array[i]) swap(temp_array[i], temp_array[length * length - 1]);
-    }    
-    int chaos = 0;    
-    for (int i = 0; i < length * length - 1; i++)
-    {
-        for (int j = i + 1; j < length * length - 1; j++)
-        {
-            if (temp_array[i] > temp_array[j]) chaos++;
-        }
     }
-    if (chaos % 2) swap(temp_array[length * length - 3], temp_array[length * length - 2]);
+    randomize_field(temp_array, length);
     for (int i = 0, k = 0; i < length; i++)
     {
         for (int j = 0; j < length; j++, k++)
@@ -72,6 +59,27 @@ int** create_field(int length)
     }
     delete[] temp_array;
     return array;
+}
+
+void randomize_field(int* temp_array, int length)
+{
+    for (int i = 0; i < rand() % 91 + 10; i++)
+    {
+        swap(temp_array[rand() % (length * length)], temp_array[rand() % (length * length)]);
+    }
+    for (int i = 0; i < length * length - 1; i++)
+    {
+        if (not temp_array[i]) swap(temp_array[i], temp_array[length * length - 1]);
+    }
+    int chaos = 0;
+    for (int i = 0; i < length * length - 1; i++)
+    {
+        for (int j = i + 1; j < length * length - 1; j++)
+        {
+            if (temp_array[i] > temp_array[j]) chaos++;
+        }
+    }
+    if (chaos % 2) swap(temp_array[length * length - 3], temp_array[length * length - 2]);
 }
 
 void draw_field(int** array, int length, int& number_of_moves)
@@ -102,7 +110,7 @@ void draw_field(int** array, int length, int& number_of_moves)
     }
 }
 
-void move(int** array, int length, int& number_of_moves, bool& win)
+void player_input(int** array, int length, int& number_of_moves, bool& win)
 {
     int k1, k2;
     bool moved = false;
@@ -114,24 +122,37 @@ void move(int** array, int length, int& number_of_moves, bool& win)
             k2 = _getch();
             switch (k2)
             {
-            case (0x4B): swap_left(array, length, moved);
+            case 0x48: k2 = 1;
                 break;
-            case 0x48: swap_up(array, length, moved);            
+            case 0x50: k2 = 2;
                 break;
-            case 0x4D: swap_right(array, length, moved);
+            case 0x4B: k2 = 3;
                 break;
-            case 0x50: swap_down(array, length, moved);
+            case 0x4D: k2 = 4;
                 break;
             }
         }
-        if (moved)
-        {
-            number_of_moves++;
-            draw_field(array, length, number_of_moves);
-            check(array, length, win);
-            break;
-        }
+        move(array, length, number_of_moves, win, k2, moved);
+        if (moved) break;
     }
+}
+
+void move(int** array, int length, int& number_of_moves, bool& win, int direction, bool& moved)
+{
+    switch (direction)
+    {
+    case 1: swap_up(array, length, moved);
+        break;
+    case 2: swap_down(array, length, moved);
+        break;
+    case 3: swap_left(array, length, moved);
+        break;
+    case 4: swap_right(array, length, moved);
+        break;
+    }
+    number_of_moves++;
+    draw_field(array, length, number_of_moves);
+    check(array, length, win);
 }
 
 void check(int** array, int length, bool& win)
@@ -169,7 +190,7 @@ void swap_up(int** array, int length, bool& moved)
             }
             if (moved) break;
         }
-    }    
+    }
 }
 
 void swap_down(int** array, int length, bool& moved)
