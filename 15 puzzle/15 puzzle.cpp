@@ -21,8 +21,7 @@ int main()
     int** array = create_field(length);
     draw_field(array, length, number_of_moves);
     do
-    {
-        Sleep(500);
+    {        
         move(array, length, number_of_moves, win);
     } while (not win);
     cout << "\n\nеее побiда";
@@ -31,40 +30,43 @@ int main()
 }
 
 int** create_field(int length)
-{    
+{
     srand(time(NULL));
-    int** array = new int* [length];
+    int* temp_array = new int[length * length];
+    int** array = new int* [length];    
     for (int i = 0; i < length; i++)
     {
         array[i] = new int[length];
     }
+    for (int i = 0; i < length * length; i++)
+    {
+        temp_array[i] = i;
+    }    
+    for (int i = 0; i < rand() % 91 + 10; i++)
+    {
+        swap(temp_array[rand() % (length * length)], temp_array[rand() % (length * length)]);
+    }    
+    for (int i = 0; i < length * length - 1; i++)
+    {
+        if (not temp_array[i]) swap(temp_array[i], temp_array[length * length - 1]);
+    }    
+    int chaos = 0;    
+    for (int i = 0; i < length * length - 1; i++)
+    {
+        for (int j = i + 1; j < length * length - 1; j++)
+        {
+            if (temp_array[i] > temp_array[j]) chaos++;
+        }
+    }
+    if (chaos % 2) swap(temp_array[length * length - 3], temp_array[length * length - 2]);
     for (int i = 0, k = 0; i < length; i++)
     {
         for (int j = 0; j < length; j++, k++)
         {
-            array[i][j] = k;
+            array[i][j] = temp_array[k];
         }
     }
-    for (int i = 0; i < rand() % 91 + 10; i++)
-    {
-        swap(array[rand() % length][rand() % length], array[rand() % length][rand() % length]);
-    }
-    int chaos = 0;
-    for (int i = 0; i < length; i++)
-    {
-        for (int j = 0; j < length; j++)
-        {
-            int k = array[i][j];
-            for (int l = i; l < length; l++)
-            {
-                for (int m = j + 1; m < length; m++)
-                {
-                    if (k > array[i][j]) chaos++;
-                }
-            }
-        }
-    }
-    if (chaos % 2) swap(array[length - 1][length - 2], array[length - 1][length - 1]);
+    delete[] temp_array;
     return array;
 }
 
