@@ -11,6 +11,10 @@ int** create_field(int length);
 void draw_field(int** array, int length, int& number_of_moves);
 void move(int** array, int length, int& number_of_moves, bool& win);
 void check(int** array, int length, bool& win);
+void swap_up(int** array, int length, bool& moved);
+void swap_down(int** array, int length, bool& moved);
+void swap_left(int** array, int length, bool& moved);
+void swap_right(int** array, int length, bool& moved);
 
 int main()
 {
@@ -110,73 +114,13 @@ void move(int** array, int length, int& number_of_moves, bool& win)
             k2 = _getch();
             switch (k2)
             {
-            case (0x4B): // Влево
-            {                
-                for (int i = 0; i < length; i++)
-                {
-                    for (int j = 0; j < length; j++)
-                    {
-                        if (not (array[i][j]) and ((j + 1) < length))
-                        {
-                            swap(array[i][j], array[i][j + 1]);
-                            moved = true;                            
-                            break;
-                        }
-                        if (moved) break;
-                    }
-                }
-            };
+            case (0x4B): swap_left(array, length, moved);
                 break;
-            case 0x48: // Вверх
-            {                
-                for (int i = 0; i < length; i++)
-                {
-                    for (int j = 0; j < length; j++)
-                    {
-                        if (not (array[i][j]) and ((i + 1) < length))
-                        {
-                            swap(array[i][j], array[i + 1][j]);
-                            moved = true;                            
-                            break;
-                        }
-                        if (moved) break;
-                    }
-                }
-            };
+            case 0x48: swap_up(array, length, moved);            
                 break;
-            case 0x4D: // Вправо
-            {                
-                for (int i = 0; i < length; i++)
-                {
-                    for (int j = 0; j < length; j++)
-                    {
-                        if (not (array[i][j]) and ((j - 1) >= 0))
-                        {
-                            swap(array[i][j], array[i][j - 1]);
-                            moved = true;                            
-                            break;
-                        }
-                        if (moved) break;
-                    }
-                }
-            };
+            case 0x4D: swap_right(array, length, moved);
                 break;
-            case 0x50: // Вниз
-            {                
-                for (int i = 0; i < length; i++)
-                {
-                    for (int j = 0; j < length; j++)
-                    {
-                        if (not (array[i][j]) and ((i - 1) >= 0))
-                        {
-                            swap(array[i][j], array[i - 1][j]);
-                            moved = true;
-                            break;
-                        }
-                        if (moved) break;
-                    }
-                }
-            };
+            case 0x50: swap_down(array, length, moved);
                 break;
             }
         }
@@ -208,5 +152,73 @@ void check(int** array, int length, bool& win)
             }
             if (not win) break;
         }        
+    }
+}
+
+void swap_up(int** array, int length, bool& moved)
+{    
+    for (int i = 0; i < length; i++)
+    {
+        for (int j = 0; j < length; j++)
+        {
+            if (not (array[i][j]) and ((i + 1) < length))
+            {
+                swap(array[i][j], array[i + 1][j]);
+                moved = true;
+                break;
+            }
+            if (moved) break;
+        }
+    }    
+}
+
+void swap_down(int** array, int length, bool& moved)
+{
+    for (int i = 0; i < length; i++)
+    {
+        for (int j = 0; j < length; j++)
+        {
+            if (not (array[i][j]) and ((i - 1) >= 0))
+            {
+                swap(array[i][j], array[i - 1][j]);
+                moved = true;
+                break;
+            }
+            if (moved) break;
+        }
+    }
+}
+
+void swap_left(int** array, int length, bool& moved)
+{
+    for (int i = 0; i < length; i++)
+    {
+        for (int j = 0; j < length; j++)
+        {
+            if (not (array[i][j]) and ((j + 1) < length))
+            {
+                swap(array[i][j], array[i][j + 1]);
+                moved = true;
+                break;
+            }
+            if (moved) break;
+        }
+    }
+}
+
+void swap_right(int** array, int length, bool& moved)
+{
+    for (int i = 0; i < length; i++)
+    {
+        for (int j = 0; j < length; j++)
+        {
+            if (not (array[i][j]) and ((j - 1) >= 0))
+            {
+                swap(array[i][j], array[i][j - 1]);
+                moved = true;
+                break;
+            }
+            if (moved) break;
+        }
     }
 }
